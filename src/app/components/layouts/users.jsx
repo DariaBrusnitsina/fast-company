@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { paginate } from "../utils/paginate";
-import Pagination from "./pagination";
-import api from "../api";
-import GroupList from "./groupList";
-import SearchStatus from "./searchStatus";
-import UserTable from "./userTable";
+import { paginate } from "../../utils/paginate";
+import Pagination from "../pagination";
+import api from "../../api";
+import GroupList from "../groupList";
+import SearchStatus from "../searchStatus";
+import UserTable from "../userTable";
 import _ from "lodash";
+import { useParams } from "react-router-dom";
+import User from "../user";
 
-const Users = () => {
+const Users = ({ match }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState();
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
     const [users, setUsers] = useState();
     const pageSize = 8;
+
+    const params = useParams();
+    const { userId } = params;
 
     useEffect(() => {
         api.users.fetchAll().then((data) => setUsers(data));
@@ -71,8 +76,9 @@ const Users = () => {
             setSelectedProf();
         };
 
-        return (
-            <div className="d-flex">
+        return <> { userId
+            ? <User userId={userId}/>
+            : <div className="d-flex">
                 {professions && (
                     <div className="d-flex flex-column flex-shrink-0 p-3">
                         <GroupList
@@ -110,13 +116,14 @@ const Users = () => {
                     </div>
                 </div>
             </div>
-        );
+        }</>;
     }
     return "loading...";
 };
 
 Users.propTypes = {
-    users: PropTypes.array
+    users: PropTypes.array,
+    match: PropTypes.string
 };
 
 export default Users;
