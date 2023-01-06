@@ -32,7 +32,6 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
 };
 
 TableHeader.propTypes = {
-    users: PropTypes.array.isRequired,
     selectedSort: PropTypes.object.isRequired,
     columns: PropTypes.object.isRequired,
     onSort: PropTypes.func.isRequired
