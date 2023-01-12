@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from "react";
 import TextField from "../common/form/textField";
 import { validator } from "../utils/validator";
+import api from "../../api";
+import SelectField from "../common/form/selectField";
+import RadioField from "../common/form/radioField";
+import MultySelectField from "../common/form/multySelectField";
 
 const RegisterForm = () => {
-    const [data, setData] = useState({ email: "", password: "" });
+    const [professions, setProfession] = useState();
+    const [qualities, setQualities] = useState();
+
+    const [data, setData] = useState({ email: "", password: "", profession: "", sex: "male" });
     const [errors, setErrors] = useState({ });
 
     const handleChange = ({ target }) => {
         setData((prevState) => ({ ...prevState, [target.name]: target.value }));
     };
+
+    useEffect(() => {
+        api.professions.fetchAll().then((data) => setProfession(data));
+        api.qualities.fetchAll().then((data) => setQualities(data));
+    }, []);
+
     const isValid = Object.keys(errors).length === 0;
 
     const handleSubmit = (e) => {
@@ -24,6 +37,9 @@ const RegisterForm = () => {
             isCapitalSymbol: { message: "Password must contains a minimum of 1 upper case letter" },
             isContainDigit: { message: "Password must contains a minimum of 1 numeric character" },
             min: { message: "Password must be at least 8 characters long", value: 8 }
+        },
+        profession: {
+            isRequired: { message: "Please choose profession" }
         }
     };
 
@@ -38,13 +54,14 @@ const RegisterForm = () => {
     };
 
     return (
-
         <form onSubmit={handleSubmit}>
             <TextField label="Email" name="email" value={data.email} onChange={handleChange} error={errors.email}/>
             <TextField label="Password" type="password" name="password" value={data.password} onChange={handleChange} error={errors.password}/>
+            <SelectField defaultOption="Choose..." label="Выберите вашу профессию" options={professions} value={data.profession} onChange={handleChange} error={errors.profession}/>
+            <RadioField name="sex" onChange={handleChange} value={data.sex} options={[{ name: "Male", value: "male" }, { name: "Female", value: "female" }, { name: "Other", value: "other" }]}/>
+            <MultySelectField options={qualities} onChange={handleChange}/>
             <button className="btn btn-primary w-100 mx-auto" type="submit" disabled={!isValid}>Submit</button>
         </form>
-
     );
 };
 
