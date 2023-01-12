@@ -5,15 +5,16 @@ import api from "../../api";
 import SelectField from "../common/form/selectField";
 import RadioField from "../common/form/radioField";
 import MultySelectField from "../common/form/multySelectField";
+import CheckBoxField from "../common/form/checkBoxField";
 
 const RegisterForm = () => {
     const [professions, setProfession] = useState();
     const [qualities, setQualities] = useState();
 
-    const [data, setData] = useState({ email: "", password: "", profession: "", sex: "male" });
+    const [data, setData] = useState({ email: "", password: "", profession: "", sex: "male", qualities: [], licence: false });
     const [errors, setErrors] = useState({ });
 
-    const handleChange = ({ target }) => {
+    const handleChange = (target) => {
         setData((prevState) => ({ ...prevState, [target.name]: target.value }));
     };
 
@@ -40,6 +41,9 @@ const RegisterForm = () => {
         },
         profession: {
             isRequired: { message: "Please choose profession" }
+        },
+        licence: {
+            isRequired: { message: "Пожалуйста, примите соглашение" }
         }
     };
 
@@ -57,9 +61,10 @@ const RegisterForm = () => {
         <form onSubmit={handleSubmit}>
             <TextField label="Email" name="email" value={data.email} onChange={handleChange} error={errors.email}/>
             <TextField label="Password" type="password" name="password" value={data.password} onChange={handleChange} error={errors.password}/>
-            <SelectField defaultOption="Choose..." label="Выберите вашу профессию" options={professions} value={data.profession} onChange={handleChange} error={errors.profession}/>
-            <RadioField name="sex" onChange={handleChange} value={data.sex} options={[{ name: "Male", value: "male" }, { name: "Female", value: "female" }, { name: "Other", value: "other" }]}/>
-            <MultySelectField options={qualities} onChange={handleChange}/>
+            <SelectField name="profession" defaultOption="Choose..." label="Выберите вашу профессию" options={professions} value={data.profession} onChange={handleChange} error={errors.profession}/>
+            <RadioField label="Выберите ваш пол" name="sex" onChange={handleChange} value={data.sex} options={[{ name: "Male", value: "male" }, { name: "Female", value: "female" }, { name: "Other", value: "other" }]}/>
+            <MultySelectField defaultValue={data.qualities} label="Выберите ваши качества" name="qualities" options={qualities} onChange={handleChange}/>
+            <CheckBoxField error={errors.licence} value={data.licence} onChange={handleChange} name="licence">Подтвердить лецензионное соглашение</CheckBoxField>
             <button className="btn btn-primary w-100 mx-auto" type="submit" disabled={!isValid}>Submit</button>
         </form>
     );
